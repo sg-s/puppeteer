@@ -49,6 +49,10 @@ p.callback_function = my_function_handle;
 
 ```
 
+## What does it look like?
+
+![](https://user-images.githubusercontent.com/6005346/30442611-f1ab6c6a-994a-11e7-8f0e-8114b59c6880.png)
+
 ## License
 
 GPL 3. `puppeteer` is free software. 
