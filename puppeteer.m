@@ -14,10 +14,11 @@ classdef puppeteer < handle
 
 	methods
 
-		function self = puppeteer(parameters,lb,ub)
+		function self = puppeteer(parameters,lb,ub,units)
 
 
 			self.parameters = parameters;
+			self.units = units;
 
 			if iscell(parameters)
 				% cell array, multiple groups
@@ -27,19 +28,20 @@ classdef puppeteer < handle
 				assert(length(parameters) == length(lb),'Lower bounds and parameters do not match')
 				assert(length(parameters) == length(ub),'Upper bounds and parameters do not match')
 				for i = 1:length(parameters)
-					self.makeUI(parameters{i},lb{i},ub{i});
+					self.makeUI(parameters{i},lb{i},ub{i},units{i});
 				end
 			elseif isstruct(parameters)
-				self.makeUI(parameters,lb,ub);
+				self.makeUI(parameters,lb,ub,units);
 			end
 
 
 		end % end constructor 
 
-		function handles = makeUI(self,parameters,lb,ub)
+		function handles = makeUI(self,parameters,lb,ub,units)
 			assert(isstruct(parameters),'makeUI expects structs')
 			assert(isstruct(lb),'makeUI expects structs')
 			assert(isstruct(ub),'makeUI expects structs')
+			assert(isstruct(units),'makeUI expects structs')
 
 			% which figure are we making?
 			if isempty(self.handles)
@@ -86,9 +88,9 @@ classdef puppeteer < handle
                 end
 
                 % add labels on the axes 
-                thisstring = [f{i} '= ',mat2str(parameters_vec(i))];
+                thisstring = [f{i} '= ',mat2str(parameters_vec(i)) units.(f{i})];
                     
-                controllabel(i) = text(self.handles(fig_no).ax,180,height-i*slider_spacing+40,thisstring,'FontSize',20);
+                controllabel(i) = text(self.handles(fig_no).ax,100,height-i*slider_spacing+40,thisstring,'FontSize',20);
 
                 self.handles(fig_no).lbcontrol(i) = uicontrol(self.handles(fig_no).fig,'Position',[20 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(lb_vec(i)),'Callback',@self.resetSliderBounds);
                 self.handles(fig_no).ubcontrol(i) = uicontrol(self.handles(fig_no).fig,'Position',[350 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(ub_vec(i)),'Callback',@self.resetSliderBounds);
@@ -104,11 +106,18 @@ classdef puppeteer < handle
 		function sliderCallback(self,src,~)
 
 			% update the corresponding control label
+			
 			for i = 1:length(self.handles)
+				
+				if i > 1
+					f = fieldnames(self.parameters{i});
+				else
+					f = fieldnames(self.parameters);
+				end
 				for j = 1:length(self.handles(i).sliders)
 					if src == self.handles(i).sliders(j)
 						old_text = self.handles(i).controllabel(j).String;
-						new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value)];
+						new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units.(f{j})];
 						self.handles(i).controllabel(j).String = new_text;
 
 						% don't forget to also update the parameters
