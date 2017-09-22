@@ -16,6 +16,24 @@ classdef puppeteer < handle
 
 		function self = puppeteer(parameters,lb,ub,units)
 
+			if nargin < 4
+				% no units
+				units = parameters;
+				if isstruct(units)
+					f = fieldnames(units);
+					for i = 1:length(f)
+						units.(f{i}) = '';
+					end
+				else
+					for j = 1:length(units)
+						f = fieldnames(units{j});
+						for i = 1:length(f)
+							units{j}.(f{i}) = '';
+						end
+					end
+				end
+
+			end
 
 			self.parameters = parameters;
 			self.units = units;
@@ -109,15 +127,20 @@ classdef puppeteer < handle
 			
 			for i = 1:length(self.handles)
 				
-				if i > 1
+				if iscell(self.parameters)
 					f = fieldnames(self.parameters{i});
-				else
+				elseif isstruct(self.parameters)
 					f = fieldnames(self.parameters);
 				end
+
 				for j = 1:length(self.handles(i).sliders)
 					if src == self.handles(i).sliders(j)
 						old_text = self.handles(i).controllabel(j).String;
-						new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units.(f{j})];
+						if iscell(self.units)
+							new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units{i}.(f{j})];
+						elseif isstruct(self.units)
+							new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units.(f{j})];
+						end
 						self.handles(i).controllabel(j).String = new_text;
 
 						% don't forget to also update the parameters
