@@ -10,7 +10,15 @@ classdef puppeteer < handle
 		parameters
 		units
 		attached_figures
+		group_names
 	end
+
+	properties (GetAccess = protected)
+		x_offset = 20;
+		y_offset = 20;
+		replace_these = {'_','_2_'};
+		with_these = {' ',' -> '};
+	end % end protected props
 
 	methods
 
@@ -55,6 +63,14 @@ classdef puppeteer < handle
 
 		end % end constructor 
 
+		function set.group_names(self,value)
+			assert(iscell(value),'group_names should be a cell')
+			assert(length(value) == length(self.parameters),'Group names should be as long as parameters -- you want one group name for each parameter group');
+			for i = 1:length(self.handles)
+				self.handles(i).fig.Name = value{i};
+			end
+		end
+
 		function handles = makeUI(self,parameters,lb,ub,units)
 			assert(isstruct(parameters),'makeUI expects structs')
 			assert(isstruct(lb),'makeUI expects structs')
@@ -76,7 +92,10 @@ classdef puppeteer < handle
 			
 			height = slider_spacing*n_controls;
 
-            self.handles(fig_no).fig = figure('position',[1000 250 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off');
+			x = 1000 + fig_no*self.x_offset;
+			y = 250 - fig_no*self.y_offset;;
+
+            self.handles(fig_no).fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off');
 
             % create an axes here, and make it invisible. 
             self.handles(fig_no).ax = axes(self.handles(fig_no).fig);
@@ -106,7 +125,11 @@ classdef puppeteer < handle
                 end
 
                 % add labels on the axes 
-                thisstring = [f{i} '= ',mat2str(parameters_vec(i)) units.(f{i})];
+                this_name = f{i};
+                for j = length(self.replace_these):-1:1
+                	this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
+                end
+                thisstring = [this_name '= ',mat2str(parameters_vec(i)) units.(f{i})];
                     
                 controllabel(i) = text(self.handles(fig_no).ax,100,height-i*slider_spacing+40,thisstring,'FontSize',20);
 
