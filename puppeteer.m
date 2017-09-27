@@ -77,6 +77,9 @@ classdef puppeteer < handle
 			assert(isstruct(ub),'makeUI expects structs')
 			assert(isstruct(units),'makeUI expects structs')
 
+			assert(length(fieldnames(parameters)) == length(fieldnames(lb)),'Lower bounds and parameters do not have the same number of elements')
+			assert(length(fieldnames(parameters)) == length(fieldnames(ub)),'Upper bounds and parameters do not have the same number of elements')
+
 			% which figure are we making?
 			if isempty(self.handles)
 				fig_no = 1;
@@ -112,8 +115,6 @@ classdef puppeteer < handle
 			lb_vec = struct2mat(lb);
 			ub_vec = struct2mat(ub);
 
-
-			% TODO -- CHECK THAT BOUNDS ARE OK
 
             for i = 1:length(f)
                 sliders(i) = uicontrol(self.handles(fig_no).fig,'Position',[80 height-i*slider_spacing 230 20],'Style', 'slider','FontSize',12,'Callback',@self.sliderCallback,'Min',lb_vec(i),'Max',ub_vec(i),'Value',parameters_vec(i));
