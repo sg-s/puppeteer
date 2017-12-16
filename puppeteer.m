@@ -11,6 +11,8 @@ classdef puppeteer < handle
 		units
 		attached_figures
 		group_names
+
+		live_update = true;
 	end
 
 	properties (GetAccess = protected)
@@ -22,7 +24,7 @@ classdef puppeteer < handle
 
 	methods
 
-		function self = puppeteer(parameters,lb,ub,units)
+		function self = puppeteer(parameters,lb,ub,units,live_update)
 
 			if nargin < 4
 				% no units
@@ -42,6 +44,12 @@ classdef puppeteer < handle
 				end
 
 			end
+
+			if nargin < 5
+				live_update = true;
+			end
+
+			self.live_update = live_update;
 
 			self.parameters = parameters;
 			self.units = units;
@@ -119,11 +127,14 @@ classdef puppeteer < handle
             for i = 1:length(f)
                 sliders(i) = uicontrol(self.handles(fig_no).fig,'Position',[80 height-i*slider_spacing 230 20],'Style', 'slider','FontSize',12,'Callback',@self.sliderCallback,'Min',lb_vec(i),'Max',ub_vec(i),'Value',parameters_vec(i));
    
-                try    % R2013b and older
-                   addlistener(sliders(i),'ActionEvent',@self.sliderCallback);
-                catch  % R2014a and newer
-                   addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallback);
-                end
+                if self.live_update
+
+	                try    % R2013b and older
+	                   addlistener(sliders(i),'ActionEvent',@self.sliderCallback);
+	                catch  % R2014a and newer
+	                   addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallback);
+	                end
+	            end
 
                 % add labels on the axes 
                 this_name = f{i};
