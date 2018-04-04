@@ -1,5 +1,18 @@
 % puppeteer.m
 % class to create UX elements that can manipulate parameters
+% puppeteer makes a bunch of sliders that you can
+% move around, and connects these sliders 
+% to real code that evaluates while you move the 
+% sliders around. 
+% 
+% usage:
+% puppeteer(parameters,lb,ub,units,live_update)
+%
+% where parameters is a cell array of names (or a cell of cells)
+% lb is a cell array of vectors (lower bounds of sliders) 
+% ub is a cell array of vectors (upper bounds of sliders)
+% units is a cell array the same size as parameters
+% live_update is a bool that determines puppeteer's behavior
 
 
 classdef puppeteer < handle
@@ -7,12 +20,15 @@ classdef puppeteer < handle
 	properties
 		handles
 		callback_function 
-		parameters
+		parameter_values
+		parameter_names
 		units
 		attached_figures
 		group_names
 
 		live_update = true;
+
+		base_y_pos
 	end
 
 	properties (GetAccess = protected)
@@ -24,49 +40,33 @@ classdef puppeteer < handle
 
 	methods
 
-		function self = puppeteer(parameters,lb,ub,units,live_update)
+		function self = puppeteer(parameter_names,parameter_values,lb,ub,units,live_update)
 
-			if nargin < 4
-				% no units
-				units = parameters;
-				if isstruct(units)
-					f = fieldnames(units);
-					for i = 1:length(f)
-						units.(f{i}) = '';
-					end
-				else
-					for j = 1:length(units)
-						f = fieldnames(units{j});
-						for i = 1:length(f)
-							units{j}.(f{i}) = '';
-						end
-					end
+			assert(iscell(parameter_names),'parameter_names (first argument) should be a cell array')
+			assert(isvector(parameter_values),'parameter_names (2nd argument) should be a vector array')
+			assert(isvector(lb),'lower bounds (3rd argument) should be a vector array')
+			assert(isvector(ub),'upper bounds (4th argument) should be a vector array')
+			assert(length(parameter_names) == length(parameter_values),'Parameter names and values should have the same size')
+
+			% if any bounds are out of order, flip them around
+			for i = 1:length(ub)
+				if lb(i) > ub(i)
+					temp = ub(i);
+					ub(i) = lb(i);
+					lb(i) = temp;
 				end
-
 			end
 
-			if nargin < 5
-				live_update = true;
+
+			if isempty(units)
+				units = cell(length(parameter_names),1);
 			end
 
-			self.live_update = live_update;
+			self.makeUI(parameter_names,parameter_values,lb,ub,units);
 
-			self.parameters = parameters;
-			self.units = units;
+			self.parameter_values = parameter_values;
+			self.parameter_names = parameter_names;
 
-			if iscell(parameters)
-				% cell array, multiple groups
-				% check that lb and ub are also cell arrays of the same size
-				assert(iscell(lb),'Lower bounds should also be a cell array, like parameters')
-				assert(iscell(ub),'Upper bounds should also be a cell array, like parameters')
-				assert(length(parameters) == length(lb),'Lower bounds and parameters do not match')
-				assert(length(parameters) == length(ub),'Upper bounds and parameters do not match')
-				for i = 1:length(parameters)
-					self.makeUI(parameters{i},lb{i},ub{i},units{i});
-				end
-			elseif isstruct(parameters)
-				self.makeUI(parameters,lb,ub,units);
-			end
 
 
 		end % end constructor 
@@ -79,53 +79,32 @@ classdef puppeteer < handle
 			end
 		end
 
-		function handles = makeUI(self,parameters,lb,ub,units)
-			assert(isstruct(parameters),'makeUI expects structs')
-			assert(isstruct(lb),'makeUI expects structs')
-			assert(isstruct(ub),'makeUI expects structs')
-			assert(isstruct(units),'makeUI expects structs')
+		function handles = makeUI(self,parameter_names,parameter_values,lb,ub,units)
 
-			assert(length(fieldnames(parameters)) == length(fieldnames(lb)),'Lower bounds and parameters do not have the same number of elements')
-			assert(length(fieldnames(parameters)) == length(fieldnames(ub)),'Upper bounds and parameters do not have the same number of elements')
-
-			% which figure are we making?
-			if isempty(self.handles)
-				fig_no = 1;
-			else
-				fig_no = length(self.handles) + 1;
-			end
 
 			slider_spacing = 59;
 			text_spacing = 59;
-			f = fieldnames(parameters);
-			n_controls = length(f);
-
+			n_controls = length(parameter_names);
 			
-			height = slider_spacing*n_controls;
+			height = 900;
 
-			x = 1000 + fig_no*self.x_offset;
-			y = 250 - fig_no*self.y_offset;;
+			x = 1000;
+			y = 250;
 
-            self.handles(fig_no).fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off');
+            self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w');
 
-            % create an axes here, and make it invisible. 
-            self.handles(fig_no).ax = axes(self.handles(fig_no).fig);
-            self.handles(fig_no).ax.Units = 'pixels';
-            self.handles(fig_no).ax.Position = [0 0 400 height];
-            self.handles(fig_no).ax.XColor = 'w';
-            self.handles(fig_no).ax.YColor = 'w';
-            hold(self.handles(fig_no).ax,'on')
-            self.handles(fig_no).ax.XLim = [0 400];
-            self.handles(fig_no).ax.YLim = [0 height];
-            
+            % make a vertical scrollbar
+            vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','FontSize',12,'Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
+    		try    % R2013b and older
+               addlistener(vertical_scroll,'ActionEvent',@self.scroll);
+            catch  % R2014a and newer
+               addlistener(vertical_scroll,'ContinuousValueChange',@self.scroll);
+            end
+           
 
-			parameters_vec = struct2mat(parameters);
-			lb_vec = struct2mat(lb);
-			ub_vec = struct2mat(ub);
-
-
-            for i = 1:length(f)
-                sliders(i) = uicontrol(self.handles(fig_no).fig,'Position',[80 height-i*slider_spacing 230 20],'Style', 'slider','FontSize',12,'Callback',@self.sliderCallback,'Min',lb_vec(i),'Max',ub_vec(i),'Value',parameters_vec(i));
+            for i = 1:n_controls
+            	self.base_y_pos(i) = height-i*slider_spacing;
+                sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','FontSize',12,'Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i));
    
                 if self.live_update
 
@@ -137,62 +116,60 @@ classdef puppeteer < handle
 	            end
 
                 % add labels on the axes 
-                this_name = f{i};
+                this_name = parameter_names{i};
                 for j = length(self.replace_these):-1:1
                 	this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
                 end
-                thisstring = [this_name '= ',mat2str(parameters_vec(i)) units.(f{i})];
+                thisstring = [this_name '= ',oval(parameter_values(i))];
                     
-                controllabel(i) = text(self.handles(fig_no).ax,100,height-i*slider_spacing+40,thisstring,'FontSize',20);
 
-                self.handles(fig_no).lbcontrol(i) = uicontrol(self.handles(fig_no).fig,'Position',[20 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(lb_vec(i)),'Callback',@self.resetSliderBounds);
-                self.handles(fig_no).ubcontrol(i) = uicontrol(self.handles(fig_no).fig,'Position',[350 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(ub_vec(i)),'Callback',@self.resetSliderBounds);
+                controllabel(i) =  uicontrol(self.handles.fig,'Position',[80 height-i*slider_spacing+20 230 20],'Style', 'text','FontSize',12,'String',thisstring,'BackgroundColor','w');
+
+
+                self.handles.lbcontrol(i) = uicontrol(self.handles.fig,'Position',[20 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(lb(i)),'Callback',@self.resetSliderBounds);
+                self.handles.ubcontrol(i) = uicontrol(self.handles.fig,'Position',[330 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(ub(i)),'Callback',@self.resetSliderBounds);
 
 
             end
-            self.handles(fig_no).sliders = sliders;
-            self.handles(fig_no).controllabel = controllabel;
+            self.handles.sliders = sliders;
+            self.handles.controllabel = controllabel;
+            
 
 
 		end
 
+
+		function scroll(self,src,~)
+			ypos = 1 - src.Value;
+			window_height = src.Parent.Position(4);
+			slider_spacing = 59;
+
+			% move all the uicontrols
+			for i = 1:length(self.handles.sliders)
+				y = self.base_y_pos(i) + slider_spacing*ypos*length(self.handles.sliders);
+
+				self.handles.sliders(i).Position(2) = y;
+				self.handles.controllabel(i).Position(2) = y+20;
+				self.handles.lbcontrol(i).Position(2) = y+3;
+				self.handles.ubcontrol(i).Position(2) = y+3;
+			end
+		end
+
 		function sliderCallback(self,src,~)
 
+			idx = find(self.handles.sliders == src);
+
+			% update the parameter values
+			self.parameter_values(idx) = src.Value;
+
 			% update the corresponding control label
-			
-			for i = 1:length(self.handles)
-				
-				if iscell(self.parameters)
-					f = fieldnames(self.parameters{i});
-				elseif isstruct(self.parameters)
-					f = fieldnames(self.parameters);
-				end
-
-				for j = 1:length(self.handles(i).sliders)
-					if src == self.handles(i).sliders(j)
-						old_text = self.handles(i).controllabel(j).String;
-						if iscell(self.units)
-							new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units{i}.(f{j})];
-						elseif isstruct(self.units)
-							new_text = [old_text(1:strfind(old_text,'=')) oval(self.handles(i).sliders(j).Value) self.units.(f{j})];
-						end
-						self.handles(i).controllabel(j).String = new_text;
-
-						% don't forget to also update the parameters
-						if iscell(self.parameters)
-							f = fieldnames(self.parameters{i});
-							self.parameters{i}.(f{j}) = src.Value;
-						else
-							f = fieldnames(self.parameters);
-							self.parameters.(f{j}) = src.Value;
-						end
-						break
-					end
-				end
-			end
+			this_string = self.handles.controllabel(idx).String;
+			this_string = this_string(1:strfind(this_string,'='));
+			this_string = [this_string oval(src.Value)];
+			self.handles.controllabel(idx).String = this_string;
 
 			if ~isempty(self.callback_function)
-				self.callback_function(self.parameters)
+				self.callback_function(self.parameter_names(idx),self.parameter_values(idx))
 			end
 
 		end % end sliderCallback
@@ -201,37 +178,33 @@ classdef puppeteer < handle
 	    	if isnan(str2double(src.String))
 	    		return
 	    	end
-	    	for i = 1:length(self.handles)
-		        if any(self.handles(i).lbcontrol == src)
-		            % some lower bound being changed
-		            this_param = find(self.handles(i).lbcontrol == src);
-		            new_bound = str2double(src.String);
-		            
-		            if self.handles(i).sliders(this_param).Value < new_bound
-		                self.handles(i).sliders(this_param).Value = new_bound;
-		            end
+	        if any(self.handles.lbcontrol == src)
+	            % some lower bound being changed
+	            this_param = find(self.handles.lbcontrol == src);
+	            new_bound = str2double(src.String);
+	            
+	            if self.handles.sliders(this_param).Value < new_bound
+	                self.handles.sliders(this_param).Value = new_bound;
+	            end
 
-		            self.handles(i).sliders(this_param).Min = new_bound;
-		        elseif any(self.handles(i).ubcontrol == src)
-		            % some upper bound being changed
-		            this_param = find(self.handles(i).ubcontrol == src);
-		            new_bound = str2double(src.String);
-		            
-		            if self.handles(i).sliders(this_param).Value > new_bound
-		                self.handles(i).sliders(this_param).Value = new_bound;
+	            self.handles.sliders(this_param).Min = new_bound;
+	        elseif any(self.handles.ubcontrol == src)
+	            % some upper bound being changed
+	            this_param = find(self.handles.ubcontrol == src);
+	            new_bound = str2double(src.String);
+	            
+	            if self.handles.sliders(this_param).Value > new_bound
+	                self.handles.sliders(this_param).Value = new_bound;
+	            end
 
-		            end
+	            self.handles.sliders(this_param).Max = new_bound;
+	        end
 
-		            self.handles(i).sliders(this_param).Max = new_bound;
-		        end
-		    end
 	    end % end resetSliderBounds
 
 	    function quitManipulateCallback(self,~,~)
             % destroy every figure in self.handles
-            for i = 1:length(self.handles)
-            	delete(self.handles(i).fig)
-            end
+            delete(self.handles.fig)
 
             % destroy every object in self.attached_figures
             for i = 1:length(self.attached_figures)
