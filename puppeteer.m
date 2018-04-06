@@ -94,7 +94,7 @@ classdef puppeteer < handle
             self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w');
 
             % make a vertical scrollbar
-            vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','FontSize',12,'Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
+            vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
     		try    % R2013b and older
                addlistener(vertical_scroll,'ActionEvent',@self.scroll);
             catch  % R2014a and newer
@@ -104,7 +104,7 @@ classdef puppeteer < handle
 
             for i = 1:n_controls
             	self.base_y_pos(i) = height-i*slider_spacing;
-                sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','FontSize',12,'Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i));
+                sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i));
    
                 if self.live_update
 
@@ -123,7 +123,7 @@ classdef puppeteer < handle
                 thisstring = [this_name '= ',oval(parameter_values(i))];
                     
 
-                controllabel(i) =  uicontrol(self.handles.fig,'Position',[80 height-i*slider_spacing+20 230 20],'Style', 'text','FontSize',12,'String',thisstring,'BackgroundColor','w');
+                controllabel(i) =  uicontrol(self.handles.fig,'Position',[80 height-i*slider_spacing+20 230 20],'Style', 'text','FontSize',14,'String',thisstring,'BackgroundColor','w');
 
 
                 self.handles.lbcontrol(i) = uicontrol(self.handles.fig,'Position',[20 height-i*slider_spacing+3 40 20],'style','edit','String',mat2str(lb(i)),'Callback',@self.resetSliderBounds);
@@ -139,10 +139,11 @@ classdef puppeteer < handle
 		end
 
 
-		function scroll(self,src,~)
+		function scroll(self,src,event)
 			ypos = 1 - src.Value;
 			window_height = src.Parent.Position(4);
 			slider_spacing = 59;
+
 
 			% move all the uicontrols
 			for i = 1:length(self.handles.sliders)
