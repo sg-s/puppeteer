@@ -2,7 +2,7 @@
 
 [![GitHub last commit](https://img.shields.io/github/last-commit/sg-s/puppeteer.svg)]()
 
-A MATLAB class that can control anything. 
+A MATLAB class that can control **anything**. 
 
 ## The Problem:
 

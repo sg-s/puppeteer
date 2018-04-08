@@ -91,14 +91,14 @@ classdef puppeteer < handle
 			x = 1000;
 			y = 250;
 
-            self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w');
+            self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
 
             % make a vertical scrollbar
-            vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
+            self.handles.vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
     		try    % R2013b and older
-               addlistener(vertical_scroll,'ActionEvent',@self.scroll);
+               addlistener(self.handles.vertical_scroll,'ActionEvent',@self.scroll);
             catch  % R2014a and newer
-               addlistener(vertical_scroll,'ContinuousValueChange',@self.scroll);
+               addlistener(self.handles.vertical_scroll,'ContinuousValueChange',@self.scroll);
             end
            
 
@@ -140,14 +140,35 @@ classdef puppeteer < handle
 
 
 		function scroll(self,src,event)
-			ypos = 1 - src.Value;
-			window_height = src.Parent.Position(4);
+
 			slider_spacing = 59;
+			window_height = self.handles.fig.Position(4);
+
+			if src == self.handles.fig
+				% scroll wheel
+				scroll_amount = .02*event.VerticalScrollCount;
+				
+				% move the scroll bar
+				ypos = 1 - self.handles.vertical_scroll.Value;
+				ypos = ypos + scroll_amount;
+				if ypos < 0
+					ypos = 0;
+				end
+				if ypos > 1
+					ypos = 1;
+				end
+				self.handles.vertical_scroll.Value = 1 - ypos;
+
+			else
+				ypos = 1 - src.Value;
+			end
+			
+			y_increment = slider_spacing*ypos*length(self.handles.sliders);
 
 
 			% move all the uicontrols
 			for i = 1:length(self.handles.sliders)
-				y = self.base_y_pos(i) + slider_spacing*ypos*length(self.handles.sliders);
+				y = self.base_y_pos(i) + y_increment;
 
 				self.handles.sliders(i).Position(2) = y;
 				self.handles.controllabel(i).Position(2) = y+20;
