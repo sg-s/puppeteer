@@ -134,7 +134,7 @@ classdef puppeteer < handle
             self.handles.sliders = sliders;
             self.handles.controllabel = controllabel;
             
-            scroll_max = (-self.base_y_pos(end) + self.base_y_pos(1) - height)/height;
+            scroll_max = -min(self.base_y_pos);
 
             self.handles.vertical_scroll.Max = scroll_max;
             self.handles.vertical_scroll.Value = scroll_max;
@@ -148,9 +148,12 @@ classdef puppeteer < handle
 			slider_spacing = 59;
 			window_height = self.handles.fig.Position(4);
 
+
+
+
 			if src == self.handles.fig
 				% scroll wheel
-				scroll_amount = .02*event.VerticalScrollCount;
+				scroll_amount = 10*event.VerticalScrollCount;
 				
 				% move the scroll bar
 				ypos = self.handles.vertical_scroll.Max - self.handles.vertical_scroll.Value;
@@ -164,10 +167,10 @@ classdef puppeteer < handle
 				self.handles.vertical_scroll.Value = self.handles.vertical_scroll.Max - ypos;
 
 			else
-				ypos = self.handles.vertical_scroll.Max - src.Value;
+				
 			end
-			
-			y_increment = slider_spacing*ypos*length(self.handles.sliders);
+
+			y_increment = self.handles.vertical_scroll.Max - self.handles.vertical_scroll.Value;
 
 
 			% move all the uicontrols
