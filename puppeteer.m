@@ -101,9 +101,9 @@ classdef puppeteer < handle
                addlistener(self.handles.vertical_scroll,'ContinuousValueChange',@self.scroll);
             end
            
-
             for i = 1:n_controls
             	self.base_y_pos(i) = height-i*slider_spacing;
+
                 sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i));
    
                 if self.live_update
