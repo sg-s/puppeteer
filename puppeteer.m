@@ -86,10 +86,14 @@ classdef puppeteer < handle
 			text_spacing = 59;
 			n_controls = length(parameter_names);
 			
-			height = 900;
+			height = 700;
 
-			x = 1000;
-			y = 250;
+			% make sure it doesn't spawn off screen
+			screen_size = get(0,'ScreenSize');
+			screen_size = screen_size(3:4);
+			x = screen_size(1)/3;
+			y = screen_size(2) - height;
+			
 
             self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
 
