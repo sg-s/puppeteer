@@ -6,7 +6,7 @@
 % sliders around. 
 % 
 % usage:
-% puppeteer(parameters,lb,ub,units,live_update)
+% puppeteer(parameter_names,parameters,lb,ub,units)
 %
 % where parameters is a cell array of names (or a cell of cells)
 % lb is a cell array of vectors (lower bounds of sliders) 
@@ -20,13 +20,11 @@ classdef puppeteer < handle
 	properties
 		handles
 		callback_function 
+		continuous_callback_function
 		parameter_values
 		parameter_names
 		units
 		attached_figures
-		group_names
-
-		live_update = true;
 
 		base_y_pos
 	end
@@ -40,7 +38,7 @@ classdef puppeteer < handle
 
 	methods
 
-		function self = puppeteer(parameter_names,parameter_values,lb,ub,units,live_update)
+		function self = puppeteer(parameter_names,parameter_values,lb,ub,units)
 
 			assert(iscell(parameter_names),'parameter_names (first argument) should be a cell array')
 			assert(isvector(parameter_values),'parameter_names (2nd argument) should be a vector array')
@@ -70,17 +68,6 @@ classdef puppeteer < handle
 
 
 		end % end constructor 
-
-		function set.group_names(self,value)
-			assert(iscell(value),'group_names should be a cell')
-			assert(length(value) == length(self.parameters),'Group names should be as long as parameters -- you want one group name for each parameter group');
-			for i = 1:length(self.handles)
-				self.handles(i).fig.Name = value{i};
-			end
-		end
-
-
-
 
 
 

@@ -31,14 +31,13 @@ for i = 1:n_controls
 
     sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i),'ButtonDownFcn',@self.sliderButtonCallback);
 
-    if self.live_update
 
-        try    % R2013b and older
-           addlistener(sliders(i),'ActionEvent',@self.sliderCallback);
-        catch  % R2014a and newer
-           addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallback);
-        end
+    try    % R2013b and older
+       addlistener(sliders(i),'ActionEvent',@self.sliderCallbackContinuious);
+    catch  % R2014a and newer
+       addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallbackContinuious);
     end
+
 
     % add labels on the axes 
     this_name = parameter_names{i};

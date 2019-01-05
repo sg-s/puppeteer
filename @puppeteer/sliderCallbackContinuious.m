@@ -1,10 +1,9 @@
 
-% this callback is called when the slider is
-% moved, then released
+% this callback is called as the slider is moved
 
-function sliderCallback(self,src,event)
+function sliderCallbackContinuious(self,src,event)
 
-if isempty(self.callback_function)
+if isempty(self.continuous_callback_function)
 	return
 end
 
@@ -21,7 +20,7 @@ this_string = this_string(1:strfind(this_string,'='));
 this_string = [this_string oval(src.Value)];
 self.handles.controllabel(idx).String = this_string;
 
-self.callback_function(self.parameter_names(idx),self.parameter_values(idx))
+self.continuous_callback_function(self.parameter_names(idx),self.parameter_values(idx))
 
 
 
