@@ -33,9 +33,9 @@ for i = 1:n_controls
 
 
     try    % R2013b and older
-       addlistener(sliders(i),'ActionEvent',@self.sliderCallbackContinuious);
+       addlistener(sliders(i),'ActionEvent',@self.sliderCallbackContinuous);
     catch  % R2014a and newer
-       addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallbackContinuious);
+       addlistener(sliders(i),'ContinuousValueChange',@self.sliderCallbackContinuous);
     end
 
 

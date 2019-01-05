@@ -1,7 +1,7 @@
 
 % this callback is called as the slider is moved
 
-function sliderCallbackContinuious(self,src,event)
+function sliderCallbackContinuous(self,src,event)
 
 if isempty(self.continuous_callback_function)
 	return
