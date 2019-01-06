@@ -7,13 +7,14 @@ slider_spacing = 59;
 text_spacing = 59;
 n_controls = length(parameter_names);
 
-height = 700;
+
 
 % make sure it doesn't spawn off screen
 screen_size = get(0,'ScreenSize');
+height = min([round(screen_size(4)*.75) slider_spacing*(n_controls+1)]);
 screen_size = screen_size(3:4);
 x = screen_size(1)/3;
-y = screen_size(2) - height;
+y = screen_size(2) - height - 100;
 
 
 self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
