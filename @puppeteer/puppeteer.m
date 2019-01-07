@@ -19,14 +19,16 @@ classdef puppeteer < handle
 
 	properties
 		handles
-		callback_function 
-		continuous_callback_function
 		parameter_values
 		parameter_names
 		units
 		attached_figures
 
 		base_y_pos
+
+		% callbacks
+		ValueChangedFcn@function_handle
+		ValueChangingFcn@function_handle
 	end
 
 	properties (GetAccess = protected)
