@@ -1,7 +1,7 @@
 function scroll(self,src,event)
 
 
-slider_spacing = 59;
+
 window_height = self.handles.fig.Position(4);
 
 
@@ -9,7 +9,7 @@ window_height = self.handles.fig.Position(4);
 
 if src == self.handles.fig
 	% scroll wheel
-	scroll_amount = 10*event.VerticalScrollCount;
+	scroll_amount = 100*event.VerticalScrollCount;
 	
 	% move the scroll bar
 	ypos = self.handles.vertical_scroll.Max - self.handles.vertical_scroll.Value;
@@ -39,3 +39,4 @@ for i = 1:length(self.handles.sliders)
 	self.handles.ubcontrol(i).Position(2) = y+3;
 end
 
+drawnow limitrate

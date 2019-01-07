@@ -31,6 +31,12 @@ classdef puppeteer < handle
 		ValueChangingFcn@function_handle
 	end
 
+
+	properties (Access = protected)
+		slider_spacing = 70;
+		text_spacing = 70;
+	end
+
 	properties (GetAccess = protected)
 		x_offset = 20;
 		y_offset = 20;
