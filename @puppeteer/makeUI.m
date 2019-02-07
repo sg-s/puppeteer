@@ -17,7 +17,12 @@ x = screen_size(1)/3;
 y = screen_size(2) - height - 100;
 
 
-self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['manipulate{}'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
+self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['puppeteer'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
+
+% plots
+handles.menu_name(1) = uimenu('Label','Tools');
+uimenu(handles.menu_name(1),'Label','Reset','Callback',@self.reset);
+
 
 % make a vertical scrollbar
 self.handles.vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','Callback',@self.scroll,'Min',0,'Max',1,'Value',1);

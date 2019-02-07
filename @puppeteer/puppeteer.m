@@ -34,6 +34,10 @@ classdef puppeteer < handle
 		y_offset = 20;
 		replace_these = {'_','_2_'};
 		with_these =    {' ',' -> '};
+
+		original_state = [];
+		original_ub = [];
+		original_lb = [];
 	end % end protected props
 
 	methods
@@ -64,6 +68,10 @@ classdef puppeteer < handle
 
 			self.parameter_values = parameter_values;
 			self.parameter_names = parameter_names;
+
+			self.original_state = parameter_values;
+			self.original_ub = ub;
+			self.original_lb = lb;
 
 
 
