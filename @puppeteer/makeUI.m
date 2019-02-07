@@ -4,7 +4,6 @@ function handles = makeUI(self,parameter_names,parameter_values,lb,ub,units)
 warning('off','MATLAB:hg:uicontrol:MinMustBeLessThanMax')
 
 slider_spacing = 59;
-text_spacing = 59;
 n_controls = length(parameter_names);
 
 
@@ -17,7 +16,7 @@ x = screen_size(1)/3;
 y = screen_size(2) - height - 100;
 
 
-self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name',['puppeteer'],'Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
+self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name','puppeteer','Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
 
 % plots
 handles.menu_name(1) = uimenu('Label','Tools');
@@ -32,7 +31,7 @@ catch  % R2014a and newer
    addlistener(self.handles.vertical_scroll,'ContinuousValueChange',@self.scroll);
 end
 
-for i = 1:n_controls
+for i = n_controls:-1:1
 	self.base_y_pos(i) = height-i*slider_spacing;
 
     sliders(i) = uicontrol(self.handles.fig,'Position',[80 self.base_y_pos(i) 230 20],'Style', 'slider','Callback',@self.sliderCallback,'Min',lb(i),'Max',ub(i),'Value',parameter_values(i),'ButtonDownFcn',@self.sliderButtonCallback);
