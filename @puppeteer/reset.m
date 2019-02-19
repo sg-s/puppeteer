@@ -9,7 +9,7 @@ for i = 1:length(self.handles.sliders)
 	% update the corresponding control label
 	this_string = self.handles.controllabel(i).String;
 	this_string = this_string(1:strfind(this_string,'='));
-	this_string = [this_string oval(self.original_state(i))];
+	this_string = [this_string mtools.string.oval(self.original_state(i))];
 	self.handles.controllabel(i).String = this_string;
 end
 

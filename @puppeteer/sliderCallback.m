@@ -14,7 +14,7 @@ self.parameter_values(idx) = src.Value;
 % update the corresponding control label
 this_string = self.handles.controllabel(idx).String;
 this_string = this_string(1:strfind(this_string,'='));
-this_string = [this_string oval(src.Value)];
+this_string = [this_string mtools.string.oval(src.Value)];
 self.handles.controllabel(idx).String = this_string;
 
 if isempty(self.callback_function)
