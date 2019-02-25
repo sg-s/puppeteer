@@ -49,7 +49,7 @@ for i = n_controls:-1:1
     for j = length(self.replace_these):-1:1
     	this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
     end
-    thisstring = [this_name '= ',mtools.string.oval(parameter_values(i))];
+    thisstring = [this_name '= ',strlib.oval(parameter_values(i))];
         
 
     controllabel(i) =  uicontrol(self.handles.fig,'Position',[80 height-i*slider_spacing+20 230 20],'Style', 'text','FontSize',14,'String',thisstring,'BackgroundColor','w');
