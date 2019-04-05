@@ -21,7 +21,7 @@ self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar
 % plots
 handles.menu_name(1) = uimenu('Label','Tools');
 uimenu(handles.menu_name(1),'Label','Reset','Callback',@self.reset);
-
+uimenu(handles.menu_name(1),'Label','Freeze','Callback',@self.freeze);
 
 % make a vertical scrollbar
 self.handles.vertical_scroll = uicontrol(self.handles.fig,'Position',[380 0 20 height],'Style', 'slider','Callback',@self.scroll,'Min',0,'Max',1,'Value',1);
