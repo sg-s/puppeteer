@@ -19,19 +19,16 @@ A MATLAB class that can control **anything**.
 Generate a new `puppeteer` instance and tell it the parameters you want to manipulate:
 
 ```matlab
-% your parameters are in a structure
-params.A = 1;
-params.B = 2;
+% these are the parameters you want to change
+A = 1;
+B = 2;
 
-% with a corresponding lower 
-% bound and upper bound structure
-lb.A = 0;
-lb.B = 0;
+% with corresponding lower 
+% bound and upper bounds
+lb = [0 0];
+ub = [2 5];
 
-ub.A = 2;
-ub.B = 3;
-
-p = puppeteer(params,lb,ub);
+p = puppeteer({'A','B'},[A; B],lb,ub,[]);
 
 ```
 
