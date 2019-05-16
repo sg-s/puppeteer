@@ -4,6 +4,8 @@
 
 A MATLAB class that can control **anything**. 
 
+![](https://user-images.githubusercontent.com/6005346/57262966-9b751100-703c-11e9-890f-3808062e60d9.gif)
+
 ## The Problem:
 
 * You have a simulation or a function with some parameters. It's complicated
@@ -51,9 +53,7 @@ p.callback_function = my_function_handle;
 
 ```
 
-## What does it look like?
 
-![](https://user-images.githubusercontent.com/6005346/30442611-f1ab6c6a-994a-11e7-8f0e-8114b59c6880.png)
 
 ## License
 
