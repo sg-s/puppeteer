@@ -44,6 +44,8 @@ classdef puppeteer < handle
 
 		function self = puppeteer(parameter_names,parameter_values,lb,ub,units)
 
+			assert(nargin == 5,' 5 arguments are required: parameter_names, parameter_values, lower bounds, upper bounds, and units.')
+
 			assert(iscell(parameter_names),'parameter_names (first argument) should be a cell array')
 			assert(isvector(parameter_values),'parameter_names (2nd argument) should be a vector array')
 			assert(isvector(lb),'lower bounds (3rd argument) should be a vector array')
