@@ -50,7 +50,7 @@ for i = 1:n_controls
     for j = length(self.replace_these):-1:1
     	this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
     end
-    thisstring = [this_name '= ',oval(parameter_values(i))];
+    thisstring = [this_name '= ',strlib.oval(parameter_values(i))];
         
 
     controllabel(i) =  uilabel(self.handles.fig,'Position',[80 height-i*self.slider_spacing+20 230 20],'FontSize',14,'Text',thisstring,'BackgroundColor','w','HorizontalAlignment','center');
