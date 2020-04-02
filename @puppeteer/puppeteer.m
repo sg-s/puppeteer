@@ -19,14 +19,20 @@ classdef puppeteer < handle
 
 	properties
 		handles
-		callback_function 
-		continuous_callback_function
 		parameter_values
 		parameter_names
 		units
 		attached_figures
 
-		base_y_pos
+		% callbacks
+		valueChangedFcn function_handle
+		valueChangingFcn function_handle
+	end
+
+
+	properties (Access = protected)
+		slider_spacing = 70;
+		text_spacing = 70;
 	end
 
 	properties (GetAccess = protected)
