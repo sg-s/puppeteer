@@ -25,3 +25,6 @@ elseif any(self.handles.ubcontrol == src)
     self.handles.sliders(this_param).Limits(2) = new_bound;
 end
 
+
+self.handles.sliders(this_param).MinorTicks = linspace(self.handles.lbcontrol(this_param).Value,self.handles.ubcontrol(this_param).Value,21);
+self.handles.sliders(this_param).MajorTicks = linspace(self.handles.lbcontrol(this_param).Value,self.handles.ubcontrol(this_param).Value,5);

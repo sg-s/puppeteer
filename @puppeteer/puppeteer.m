@@ -24,11 +24,9 @@ classdef puppeteer < handle
 		units
 		attached_figures
 
-		base_y_pos
-
 		% callbacks
-		ValueChangedFcn@function_handle
-		ValueChangingFcn@function_handle
+		valueChangedFcn function_handle
+		valueChangingFcn function_handle
 	end
 
 
