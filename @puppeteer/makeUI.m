@@ -3,11 +3,7 @@ function handles = makeUI(self,parameter_names,parameter_values,lb,ub,units)
 
 warning('off','MATLAB:hg:uicontrol:MinMustBeLessThanMax')
 
-<<<<<<< HEAD
-slider_spacing = 59;
-=======
 
->>>>>>> uisliders
 n_controls = length(parameter_names);
 
 
@@ -23,15 +19,6 @@ x = screen_size(1)/3;
 y = screen_size(2) - height - 100;
 
 
-<<<<<<< HEAD
-self.handles.fig = figure('position',[x y 400 height], 'Toolbar','none','Menubar','none','NumberTitle','off','IntegerHandle','off','CloseRequestFcn',@self.quitManipulateCallback,'Name','puppeteer','Resize','off','Color','w','WindowScrollWheelFcn',@self.scroll);
-
-% plots
-handles.menu_name(1) = uimenu('Label','Tools');
-uimenu(handles.menu_name(1),'Label','Reset','Callback',@self.reset);
-uimenu(handles.menu_name(1),'Label','Freeze','Callback',@self.freeze);
-=======
->>>>>>> uisliders
 
 
 fig = uifigure('position',[x y 400 height],'Name','puppeteer');
@@ -56,12 +43,7 @@ self.handles.tabs = uitab(self.handles.tabgroup,'Title','Group 0');
 
 group_idx = 0;
 
-<<<<<<< HEAD
-for i = n_controls:-1:1
-	self.base_y_pos(i) = height-i*slider_spacing;
-=======
 for i = 1:n_controls
->>>>>>> uisliders
 
 
     ypos = height - self.slider_spacing*i + floor(i/n_rows)*height;
