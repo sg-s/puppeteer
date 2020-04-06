@@ -15,7 +15,7 @@ this_string = [this_string strlib.oval(event.Value)];
 self.handles.controllabel(idx).Text = this_string;
 
 
-if isempty(self.valueChangingFcn)
+if isempty(self.valueChangedFcn)
 	return
 end
 
