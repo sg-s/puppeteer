@@ -46,7 +46,7 @@ group_idx = 0;
 for i = 1:n_controls
 
 
-    ypos = height - self.slider_spacing*i + floor(i/n_rows)*height;
+    ypos = height - self.slider_spacing*i + floor(i/n_rows)*height - self.slider_spacing/2;
 
 
     sliders(i) = uislider(self.handles.tabs(end),'ValueChangingFcn',@self.valueChangingCallback,'Limits',[lb(i) ub(i)],'Value',parameter_values(i),'ValueChangedFcn',@self.valueChangedCallback,'MajorTickLabels',{});
@@ -90,3 +90,7 @@ self.handles.controllabel = controllabel;
 drawnow
 warning('on','MATLAB:hg:uicontrol:MinMustBeLessThanMax')
 
+% create a reset button
+self.handles.reset = uibutton(fig,'Text','Reset');
+self.handles.reset.Position = [150 height-50 100 20];
+self.handles.reset.ButtonPushedFcn = @self.reset;

@@ -31,13 +31,16 @@ classdef puppeteer < handle
 
 
 	properties (Access = protected)
-		slider_spacing = 70;
-		text_spacing = 70;
+		slider_spacing (1,1) double = 70;
+		text_spacing (1,1) double = 70;
+
+		original_values (:,1) double
+
 	end
 
 	properties (GetAccess = protected)
-		x_offset = 20;
-		y_offset = 20;
+		x_offset double = 20;
+		y_offset double = 20;
 		replace_these = {'_','_2_'};
 		with_these =    {' ',' -> '};
 	end % end protected props
@@ -71,6 +74,9 @@ classdef puppeteer < handle
 			self.parameter_values = parameter_values;
 			self.parameter_names = parameter_names;
 
+
+			self.original_values = self.parameter_values;
+			
 
 
 		end % end constructor 
