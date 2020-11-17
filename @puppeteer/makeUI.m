@@ -42,11 +42,12 @@ self.handles.tabgroup.Position = [0 0 400 height];
 self.handles.tabs = uitab(self.handles.tabgroup,'Title','Group 0');
 
 group_idx = 0;
+ypos = height;
 
 for i = 1:n_controls
 
 
-    ypos = height - self.slider_spacing*i + floor(i/n_rows)*height;
+    ypos = ypos - self.slider_spacing;
 
 
     sliders(i) = uislider(self.handles.tabs(end),'ValueChangingFcn',@self.valueChangingCallback,'Limits',[lb(i) ub(i)],'Value',parameter_values(i),'ValueChangedFcn',@self.valueChangedCallback,'MajorTickLabels',{});
@@ -71,9 +72,10 @@ for i = 1:n_controls
     sliders(i).MinorTicks = linspace(lb(i),ub(i),21);
     sliders(i).MajorTicks = linspace(lb(i),ub(i),5);
 
-    if  rem(i,n_rows) == 0
+    if  ypos < 2*self.slider_spacing
         group_idx = group_idx + 1;
         self.handles.tabs = [self.handles.tabs; uitab(self.handles.tabgroup,'Title',['Group ' mat2str(group_idx)])];
+        ypos = height;
     end
 
 
