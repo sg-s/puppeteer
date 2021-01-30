@@ -1,12 +1,12 @@
 function valueChangedCallback(self,src,event)
 
 
+
 idx = find(self.handles.sliders == src);
 
 
-
 % update the parameter values
-self.parameter_values(idx) = event.Value;
+self.Pstrings(idx).Value = event.Value;
 
 % update the corresponding control label
 this_string = self.handles.controllabel(idx).Text;
@@ -19,7 +19,5 @@ if isempty(self.valueChangedFcn)
 	return
 end
 
-self.valueChangedFcn(self.parameter_names(idx),self.parameter_values(idx))
-
-
+self.valueChangedFcn(self.Pstrings(idx).Name,event.Value)
 

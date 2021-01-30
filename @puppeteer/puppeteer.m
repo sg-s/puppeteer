@@ -18,11 +18,9 @@
 classdef puppeteer < handle
 
 	properties
-		handles
-		parameter_values
-		parameter_names
-		units
+		handles		
 		attached_figures
+		 
 
 		% callbacks
 		valueChangedFcn function_handle
@@ -38,6 +36,11 @@ classdef puppeteer < handle
 
 	end
 
+	properties (SetAccess = protected) 
+
+		Pstrings (:,1) struct 
+	end
+
 	properties (GetAccess = protected)
 		x_offset double = 20;
 		y_offset double = 20;
@@ -47,36 +50,7 @@ classdef puppeteer < handle
 
 	methods
 
-		function self = puppeteer(parameter_names,parameter_values,lb,ub,units)
-
-			assert(iscell(parameter_names),'parameter_names (first argument) should be a cell array')
-			assert(isvector(parameter_values),'parameter_names (2nd argument) should be a vector array')
-			assert(isvector(lb),'lower bounds (3rd argument) should be a vector array')
-			assert(isvector(ub),'upper bounds (4th argument) should be a vector array')
-			assert(length(parameter_names) == length(parameter_values),'Parameter names and values should have the same size')
-
-			% if any bounds are out of order, flip them around
-			for i = 1:length(ub)
-				if lb(i) > ub(i)
-					temp = ub(i);
-					ub(i) = lb(i);
-					lb(i) = temp;
-				end
-			end
-
-
-			if isempty(units)
-				units = cell(length(parameter_names),1);
-			end
-
-			self.makeUI(parameter_names,parameter_values,lb,ub,units);
-
-			self.parameter_values = parameter_values;
-			self.parameter_names = parameter_names;
-
-
-			self.original_values = self.parameter_values;
-			
+		function self = puppeteer()
 
 
 		end % end constructor 

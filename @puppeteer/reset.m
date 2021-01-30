@@ -1,40 +1,48 @@
 function reset(self,~,~)
 
-self.parameter_values = self.original_values;
 
+% first copy the original values from the cache to the Pstrings array
+for i = 1:length(self.Pstrings)
+	self.Pstrings(i).Value = self.original_values(i);
+end
+
+
+% now update all the sliders
 for i = 1:length(self.handles.sliders)
 
 
-	if self.parameter_values(i) > self.handles.sliders(i).Limits(2)
-		event = struct('Value',self.parameter_values(i));
-		self.handles.ubcontrol(i).Value = self.parameter_values(i);
+	Value = self.Pstrings(i).Value;
+
+	if Value > self.handles.sliders(i).Limits(2)
+		event = struct('Value',Value);
+		self.handles.ubcontrol(i).Value = Value;
 		self.resetSliderBounds(self.handles.ubcontrol(i),event);
 	end
 
-	if self.parameter_values(i) < self.handles.sliders(i).Limits(1)
-		event = struct('Value',self.parameter_values(i));
-		self.handles.lbcontrol(i).Value = self.parameter_values(i);
+	if Value < self.handles.sliders(i).Limits(1)
+		event = struct('Value',Value);
+		self.handles.lbcontrol(i).Value = Value;
 		self.resetSliderBounds(self.handles.lbcontrol(i),event);
 	end
 
 
-	self.handles.sliders(i).Value = self.parameter_values(i);
+	self.handles.sliders(i).Value = Value;
 
 	% update the corresponding control label
 	this_string = self.handles.controllabel(i).Text;
 	this_string = this_string(1:strfind(this_string,'='));
-	this_string = [this_string strlib.oval(self.parameter_values(i))];
+	this_string = [this_string strlib.oval(Value)];
 	self.handles.controllabel(i).Text = this_string;
 
 end
 
 if ~isempty(self.valueChangedFcn)
-	self.valueChangedFcn(self.parameter_names,self.parameter_values)
+	self.valueChangedFcn({self.Pstrings.Name},vertcat(self.Pstrings.Value))
 	return
 end
 
 
 if ~isempty(self.valueChangingFcn)
-	self.valueChangingFcn(self.parameter_names,self.parameter_values)
+	self.valueChangingFcn({self.Pstrings.Name},vertcat(self.Pstrings.Value))
 	return
 end
