@@ -4,7 +4,14 @@ function handles = makeUI(self)
 warning('off','MATLAB:hg:uicontrol:MinMustBeLessThanMax')
 
 
-n_controls = length(self.Pstrings);
+% need to compute the maximum # of controls in each group
+group_names = categories([self.Pstrings.Group]);
+n_controls = zeros(length(group_names),1);
+for i = 1:length(group_names)
+    this = [self.Pstrings.Group] == group_names{i};
+    n_controls(i) = sum(this);
+end
+n_controls = max(n_controls);
 
 
 
@@ -37,10 +44,7 @@ self.handles.tabgroup = uitabgroup(self.handles.fig);
 self.handles.tabgroup.Position = [1 50 400 height-50];
 
 
-
-
 % make a tab for each group
-group_names = categories([self.Pstrings.Group]);
 
 
 
@@ -54,8 +58,7 @@ for j = 1:length(group_names)
     this = [self.Pstrings.Group] == group_names{j};
     pstrings = self.Pstrings(this);
 
-
-    ypos = self.slider_spacing/2;
+    ypos = height - sum(this)*self.slider_spacing;
 
     for i = 1:length(pstrings)
 
@@ -78,8 +81,8 @@ for j = 1:length(group_names)
         controllabel(pidx) =  uilabel(self.handles.tabs(j),'Position',[80 ypos+20 230 20],'FontSize',14,'Text',thisstring,'BackgroundColor','w','HorizontalAlignment','center');
 
 
-        self.handles.lbcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric','Position',[20 ypos-7 40 20],'Value',pstrings(i).Lower,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name);
-        self.handles.ubcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric', 'Position',[330 ypos-7 40 20],'Value',pstrings(i).Upper,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'HorizontalAlignment','left');
+        self.handles.lbcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric','Position',[20 ypos-7 40 20],'Value',pstrings(i).Lower,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'Limits',[pstrings(i).LowerLimit Inf]);
+        self.handles.ubcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric', 'Position',[330 ypos-7 40 20],'Value',pstrings(i).Upper,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'HorizontalAlignment','left','Limits',[-Inf pstrings(i).UpperLimit ]);
 
 
         sliders(pidx).MinorTicks = linspace(pstrings(i).Lower,pstrings(i).Upper,21);
