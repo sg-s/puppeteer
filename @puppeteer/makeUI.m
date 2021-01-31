@@ -75,7 +75,7 @@ for j = 1:length(group_names)
         % for j = length(self.replace_these):-1:1
         %     this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
         % end
-        thisstring = [this_name '= ',strlib.oval(pstrings(i).Value)];
+        thisstring = [this_name '= ',strlib.oval(pstrings(i).Value) pstrings(i).Units];
         
 
         controllabel(pidx) =  uilabel(self.handles.tabs(j),'Position',[80 ypos+20 230 20],'FontSize',14,'Text',thisstring,'BackgroundColor','w','HorizontalAlignment','center');
