@@ -3,7 +3,7 @@ function add(self,options)
 arguments
 	self (1,1) puppeteer
 	options.Name char = ''
-	options.Value (1,1) double = .1
+	options.Value = .1
 	options.Lower (1,1) double = 0
 	options.Upper (1,1) double = 1;
 	options.LogScale (1,1) logical = false
@@ -11,6 +11,9 @@ arguments
 	options.Group (1,1) categorical = categorical({'Parameters'})
 	options.LowerLimit (1,1) double = -Inf
 	options.UpperLimit (1,1) double = Inf
+	options.ToggleSwitch (1,1) logical = false
+	options.ToggleLeft char = 'On'
+	options.ToggleRight char = 'off'
 end
 
 
@@ -31,13 +34,9 @@ if options.LogScale & options.Value < 0
 end
 
 
-% if options.LogScale & options.Value == 0
-% 	options.Value = 1e-24;
-% end
-
-% if options.LogScale & options.Lower == 0
-% 	options.Lower = options.Value*1e-3;
-% end
+if options.ToggleSwitch && options.Value == .1
+	options.Value = options.ToggleLeft;
+end
 
 if isempty(self.Pstrings)
 	self.Pstrings = options;

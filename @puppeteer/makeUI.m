@@ -60,33 +60,49 @@ for j = 1:length(group_names)
 
     ypos = height - sum(this)*self.slider_spacing;
 
+    ypos = self.slider_spacing;
+
     for i = 1:length(pstrings)
 
 
         pidx = find(strcmp(pstrings(i).Name,{self.Pstrings.Name}));
 
+        if pstrings(i).ToggleSwitch
+            sliders(pidx) = uiswitch(self.handles.tabs(j),'ValueChangedFcn',@self.update,'Items',{pstrings(i).ToggleLeft, pstrings(i).ToggleRight});
+            sliders(pidx).Position(2) = ypos;
+            sliders(pidx).Position(1) = (400-sliders(pidx).OuterPosition(3))/2;
+        else
+            sliders(pidx) = uislider(self.handles.tabs(j),'Limits',[pstrings(i).Lower pstrings(i).Upper],'Value',pstrings(i).Value,'ValueChangedFcn',@self.update,'MajorTickLabels',{});
 
-        sliders(pidx) = uislider(self.handles.tabs(j),'ValueChangingFcn',@self.valueChangingCallback,'Limits',[pstrings(i).Lower pstrings(i).Upper],'Value',pstrings(i).Value,'ValueChangedFcn',@self.valueChangedCallback,'MajorTickLabels',{});
-        sliders(pidx).Position(1:3) = [80 ypos 230];
+            if self.LiveUpdates
+                sliders(pidx).ValueChangingFcn = @self.update;
+            end
+
+            sliders(pidx).Position(1:3) = [80 ypos 230];
+
+            sliders(pidx).MinorTicks = linspace(pstrings(i).Lower,pstrings(i).Upper,21);
+            sliders(pidx).MajorTicks = linspace(pstrings(i).Lower,pstrings(i).Upper,5);
+
+        end
 
 
         % add labels on the axes 
-        this_name = pstrings(i).Name;
+        thisstring = pstrings(i).Name;
         % for j = length(self.replace_these):-1:1
         %     this_name = strrep(this_name,self.replace_these{j},self.with_these{j});
         % end
-        thisstring = [this_name '= ',strlib.oval(pstrings(i).Value) pstrings(i).Units];
+        if ~pstrings(i).ToggleSwitch
+            thisstring = [thisstring '= ',strlib.oval(pstrings(i).Value) pstrings(i).Units];
+        end
         
 
         controllabel(pidx) =  uilabel(self.handles.tabs(j),'Position',[80 ypos+20 230 20],'FontSize',14,'Text',thisstring,'BackgroundColor','w','HorizontalAlignment','center');
 
+        if ~pstrings(i).ToggleSwitch
+            self.handles.lbcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric','Position',[20 ypos-7 40 20],'Value',pstrings(i).Lower,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'Limits',[pstrings(i).LowerLimit Inf]);
+            self.handles.ubcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric', 'Position',[330 ypos-7 40 20],'Value',pstrings(i).Upper,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'HorizontalAlignment','left','Limits',[-Inf pstrings(i).UpperLimit ]);
+        end
 
-        self.handles.lbcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric','Position',[20 ypos-7 40 20],'Value',pstrings(i).Lower,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'Limits',[pstrings(i).LowerLimit Inf]);
-        self.handles.ubcontrol(pidx) = uieditfield(self.handles.tabs(j),'numeric', 'Position',[330 ypos-7 40 20],'Value',pstrings(i).Upper,'ValueChangedFcn',@self.resetSliderBounds,'Tag',pstrings(i).Name,'HorizontalAlignment','left','Limits',[-Inf pstrings(i).UpperLimit ]);
-
-
-        sliders(pidx).MinorTicks = linspace(pstrings(i).Lower,pstrings(i).Upper,21);
-        sliders(pidx).MajorTicks = linspace(pstrings(i).Lower,pstrings(i).Upper,5);
 
 
         ypos = ypos + self.slider_spacing;
@@ -116,4 +132,4 @@ self.handles.reset.ButtonPushedFcn = @self.reset;
 
 
 % remember the original values so we can return to them
-self.original_values = vertcat(self.Pstrings.Value);
+self.original_values = self.Pstrings;

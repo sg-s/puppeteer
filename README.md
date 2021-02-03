@@ -14,42 +14,31 @@ A MATLAB class that can control **anything**.
 
 ## The solution 
 
-`puppeteer` does all the hard work of generating UI elements for you. 
+`puppeteer` does all the hard work of generating UI elements for you. Here's how it works. 
 
 Generate a new `puppeteer` instance and tell it the parameters you want to manipulate:
 
 ```matlab
-% these are the parameters you want to change
-A = 1;
-B = 2;
 
-% with corresponding lower 
-% bound and upper bounds
-lb = [0 0];
-ub = [2 5];
+p = puppeteer();
 
-p = puppeteer({'A','B'},[A; B],lb,ub,[]);
-
+p.add('Name',Name,'Value',Value,'Group',categorical({'Wow'}),'Upper',1e-3,'Units','M');
+% and so on...
 ```
 
-`puppeteer` then generates a figure with sliders that allows you to control these parameters. The nice thing now is that any changes you make in the sliders are reflected in the `puppeteer` object:
 
-```
-p.parameters % stores the updated value, always
-``` 
 
-Now, there are two ways to hook up `puppeteer` to your simulation so that changes in `puppeteer` affect your simulation. 
+Then wire up a callback function that gets called every time the sliders move:
 
-The first is simple: your simulation simply polls `p.parameters`, and changes its parameters based on that. 
-
-The second allows you to configure a callback function so that `puppeteer` will call this every time you change a parameter. 
-
-```
-p.callback_function = my_function_handle;
-% puppeteer will call this function with the parameters argument
-
+```matlab
+p.callbackFcn = @self.manipulateEvaluate; 
 ```
 
+Finally, ask it to draw the UI
+
+```matlab
+p.makeUI;
+```
 
 
 ## License

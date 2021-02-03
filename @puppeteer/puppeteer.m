@@ -23,16 +23,18 @@ classdef puppeteer < handle
 		 
 
 		% callbacks
-		valueChangedFcn function_handle
-		valueChangingFcn function_handle
+		callbackFcn function_handle
+		LiveUpdates (1,1) logical = true
 	end
 
 
 	properties (Access = protected)
 		slider_spacing (1,1) double = 70;
-		text_spacing (1,1) double = 70;
 
-		original_values (:,1) double
+
+		% original values needs to be a cell because for 
+		% toggle switches, the values aren't numbers but char
+		original_values (:,1) struct
 
 	end
 
