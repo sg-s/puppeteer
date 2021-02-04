@@ -68,15 +68,15 @@ for j = 1:length(group_names)
         pidx = find(strcmp(pstrings(i).Name,{self.Pstrings.Name}));
 
         if pstrings(i).ToggleSwitch
-            sliders(pidx) = uiswitch(self.handles.tabs(j),'ValueChangedFcn',@self.update,'Items',{pstrings(i).ToggleLeft, pstrings(i).ToggleRight});
+            sliders(pidx) = uiswitch(self.handles.tabs(j),'ValueChangedFcn',@self.valueChangingCallback,'Items',{pstrings(i).ToggleLeft, pstrings(i).ToggleRight});
             sliders(pidx).Position(2) = ypos;
             sliders(pidx).Position(1) = (400-sliders(pidx).OuterPosition(3))/2;
         else
-            sliders(pidx) = uislider(self.handles.tabs(j),'Limits',[pstrings(i).Lower pstrings(i).Upper],'Value',pstrings(i).Value,'ValueChangedFcn',@self.update,'MajorTickLabels',{});
+            sliders(pidx) = uislider(self.handles.tabs(j),'Limits',[pstrings(i).Lower pstrings(i).Upper],'Value',pstrings(i).Value,'ValueChangedFcn',@self.valueChangedCallback,'MajorTickLabels',{});
 
-            if self.LiveUpdates
-                sliders(pidx).ValueChangingFcn = @self.update;
-            end
+       
+            sliders(pidx).ValueChangingFcn = @self.valueChangingCallback;
+    
 
             sliders(pidx).Position(1:3) = [80 ypos 230];
 

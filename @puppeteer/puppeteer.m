@@ -23,8 +23,8 @@ classdef puppeteer < handle
 		 
 
 		% callbacks
-		callbackFcn function_handle
-		LiveUpdates (1,1) logical = true
+		valueChangingFcn function_handle
+		valueChangedFcn function_handle
 	end
 
 

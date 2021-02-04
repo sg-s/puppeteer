@@ -19,8 +19,3 @@ this_string = this_string(1:strfind(this_string,'='));
 this_string = [this_string ' ' S self.Pstrings(idx).Units];
 self.handles.controllabel(idx).Text = this_string;
 
-if isempty(self.callbackFcn)
-	return
-end
-
-self.callbackFcn(self.Pstrings(idx));
