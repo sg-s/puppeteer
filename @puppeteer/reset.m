@@ -43,8 +43,10 @@ for i = 1:length(self.handles.sliders)
 
 end
 
-if ~isempty(self.callbackFcn)
-	self.callbackFcn(self.Pstrings)
+if ~isempty(self.valueChangingFcn)
+	self.valueChangingFcn(self.Pstrings)
+elseif ~isempty(self.valueChangedFcn)
+	self.valueChangedFcn(self.Pstrings)
 end
 
 

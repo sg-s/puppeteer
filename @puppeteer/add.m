@@ -38,6 +38,14 @@ if options.ToggleSwitch && options.Value == .1
 	options.Value = options.ToggleLeft;
 end
 
+if options.LowerLimit > options.Lower
+	options.Lower = options.LowerLimit;
+end
+
+if options.UpperLimit < options.Upper
+	options.Upper = options.UpperLimit;
+end
+
 if isempty(self.Pstrings)
 	self.Pstrings = options;
 else
