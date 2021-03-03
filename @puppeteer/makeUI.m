@@ -47,9 +47,9 @@ self.handles.tabgroup.Position = [1 50 400 height-50];
 % make a tab for each group
 
 
-
 for j = 1:length(group_names)
     self.handles.tabs(j) = uitab(self.handles.tabgroup,'Title',group_names{j});
+
 
     self.handles.tabs(j).Scrollable = 'on';
 
@@ -122,8 +122,9 @@ self.handles.sliders = sliders;
 self.handles.controllabel = controllabel;
 
 
-drawnow
+drawnow nocallbacks limitrate
 warning('on','MATLAB:hg:uicontrol:MinMustBeLessThanMax')
+
 
 % create a reset button
 self.handles.reset = uibutton(fig,'Text','Reset');
@@ -133,3 +134,4 @@ self.handles.reset.ButtonPushedFcn = @self.reset;
 
 % remember the original values so we can return to them
 self.original_values = self.Pstrings;
+
