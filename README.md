@@ -31,7 +31,7 @@ p.add('Name',Name,'Value',Value,'Group',categorical({'Wow'}),'Upper',1e-3,'Units
 Then wire up a callback function that gets called every time the sliders move:
 
 ```matlab
-p.callbackFcn = @self.manipulateEvaluate; 
+p.valueChangingFcn = @self.manipulateEvaluate; 
 ```
 
 Finally, ask it to draw the UI
@@ -40,7 +40,15 @@ Finally, ask it to draw the UI
 p.makeUI;
 ```
 
+That's it. Enjoy.
+
 
 ## License
 
 GPL 3. `puppeteer` is free software. 
+
+
+## puppeteer in use
+
+1. [black-box-neuron](https://github.com/sg-s/black-box-neuron-public)
+2. [xolotl](https://github.com/sg-s/xolotl)
