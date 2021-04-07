@@ -2,6 +2,8 @@
 
 [![GitHub last commit](https://img.shields.io/github/last-commit/sg-s/puppeteer.svg)]()
 
+[![View puppeteer on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/89927-puppeteer)
+
 A MATLAB class that can control **anything**. 
 
 ![](https://user-images.githubusercontent.com/6005346/57262966-9b751100-703c-11e9-890f-3808062e60d9.gif)
